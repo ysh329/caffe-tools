@@ -80,9 +80,9 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
     # feed transformed image to net
     print("type(transformed_image:{})".format(type(transformed_image)))
     print("transformed_image.shape:{})".format(transformed_image.shape))
-    net.blobs['data'].data[...] = transformed_image.reshape(1,1,1000,750)
+    #net.blobs['data'].data[...] = transformed_image.reshape(1,1,1000,750)
 
-    #net.blobs['data'].data = transformed_image
+    net.blobs['data'].data[...] = transformed_image
     net.forward()
     #output = net.forward()
     return transformed_image, net
@@ -90,15 +90,15 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
 if __name__ == "__main__":
     # init params 
     image_path = '/home/yuanshuai/cat.png'
-    input_feature_path = "/home/yuanshuai/datainput.caffefeature"
-    layer_name = "conv3"
-    save_feature_path = "/home/yuanshuai/{}.caffefeature".format(layer_name)
-
-    prototxt_path='/home/yuanshuai/code/TCLSR/TCLSR.prototxt'
-    caffemodel_path='/home/yuanshuai/code/TCLSR/TCLSR.caffemodel'
-    input_shape_dict = {"n":1, "c":1, "h":1000, "w":750}
+    input_feature_path = "./cat_mobilenetv2_224x224.dat"
+    layer_name_and_save_path_dict = {"pool6": "./mobilenetv2_result_pool6.dat",
+                                     "fc7": "./mobilenetv2_result_fc7.dat",
+                                     "prob": "./mobilenetv2_result_prob.dat"}
+    prototxt_path='./mobilenetv2.prototxt'
+    caffemodel_path='./mobilenetv2.caffemodel'
+    input_shape_dict = {"n":1, "c":3, "h":224, "w":224}
     mean_npy_path = '/opt/caffe/python/caffe/imagenet/ilsvrc_2012_mean.npy'
-    set_mean = False
+    set_mean = True
 
     # load model, feed model, run model
     transformed_image, net = run_model(prototxt_path,\
@@ -109,8 +109,11 @@ if __name__ == "__main__":
                                        set_mean=set_mean)
 
     # save data and feature
-    #save_input_data(transformed_image, input_feature_path)
-    save_feature_data(net, layer_name, save_feature_path)
+    save_input_data(transformed_image, input_feature_path)
+
+    for layer_name in layer_name_and_save_path_dict.keys():
+        save_path = layer_name_and_save_path_dict[layer_name]
+        save_feature_data(net, layer_name, save_path)
 
 #'''
    
