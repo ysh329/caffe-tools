@@ -34,9 +34,12 @@ def save_feature_data(net, layer_name, save_feature_path):
     print("[INFO] save {}'s feature data ......"\
           .format(layer_name))
     feature = net.blobs[layer_name].data[0].flatten()
-    feature_list = map(lambda f: "".join([str(f), "\n"]), feature)
+    feature_list = map(lambda f: "".join([str("%.8f" % f), "\n"]), feature)
     with open(save_feature_path, "w") as f:
-        f.writelines(feature_list)
+        for vidx in xrange(len(feature_list)):
+            v = feature_list[vidx]
+            f.write(v)
+        #f.writelines(feature_list)
     print("[INFO] {} data saved successfully in {}"\
           .format(layer_name, save_feature_path))
 
@@ -91,7 +94,8 @@ if __name__ == "__main__":
     # init params 
     image_path = '/home/yuanshuai/cat.png'
     input_feature_path = "./cat_mobilenetv2_224x224.dat"
-    layer_name_and_save_path_dict = {"pool6": "./mobilenetv2_result_pool6.dat",
+    layer_name_and_save_path_dict = {"conv1": "./mobilenetv2_result_conv1.dat",
+                                     "pool6": "./mobilenetv2_result_pool6.dat",
                                      "fc7": "./mobilenetv2_result_fc7.dat",
                                      "prob": "./mobilenetv2_result_prob.dat"}
     prototxt_path='./mobilenetv2.prototxt'
