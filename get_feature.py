@@ -83,12 +83,14 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
     # feed transformed image to net
     print("type(transformed_image:{})".format(type(transformed_image)))
     print("transformed_image.shape:{})".format(transformed_image.shape))
-    net.blobs['data'].data[...] = transformed_image
     if input_shape_dict['c']!=3:
         net.blobs['data'].data[...] = transformed_image.reshape(input_shape_dict['n'],\
                                                                 input_shape_dict['c'],\
                                                                 input_shape_dict['h'],\
                                                                 input_shape_dict['w'])
+    else:
+        net.blobs['data'].data[...] = transformed_image
+
     
 
 
@@ -98,7 +100,7 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
 
 if __name__ == "__main__":
     # init params 
-    image_path = '/home/yuanshuai/cat.png'
+    image_path = './cat.png'
     input_feature_path = "./cat_tclsr_250x125.dat"
     layer_name_and_save_path_dict = {"conv1": "./tclsr_result_conv1.dat",
                                      "conv2": "./tclsr_result_conv2.dat",
