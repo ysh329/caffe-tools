@@ -83,9 +83,15 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
     # feed transformed image to net
     print("type(transformed_image:{})".format(type(transformed_image)))
     print("transformed_image.shape:{})".format(transformed_image.shape))
-    #net.blobs['data'].data[...] = transformed_image.reshape(1,1,1000,750)
-
     net.blobs['data'].data[...] = transformed_image
+    if input_shape_dict['c']!=3:
+        net.blobs['data'].data[...] = transformed_image.reshape(input_shape_dict['n'],\
+                                                                input_shape_dict['c'],\
+                                                                input_shape_dict['h'],\
+                                                                input_shape_dict['w'])
+    
+
+
     net.forward()
     #output = net.forward()
     return transformed_image, net
@@ -93,16 +99,15 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
 if __name__ == "__main__":
     # init params 
     image_path = '/home/yuanshuai/cat.png'
-    input_feature_path = "./cat_mobilenetv2_224x224.dat"
-    layer_name_and_save_path_dict = {"conv1": "./mobilenetv2_result_conv1.dat",
-                                     "pool6": "./mobilenetv2_result_pool6.dat",
-                                     "fc7": "./mobilenetv2_result_fc7.dat",
-                                     "prob": "./mobilenetv2_result_prob.dat"}
-    prototxt_path='./mobilenetv2.prototxt'
-    caffemodel_path='./mobilenetv2.caffemodel'
-    input_shape_dict = {"n":1, "c":3, "h":224, "w":224}
+    input_feature_path = "./cat_tclsr_250x125.dat"
+    layer_name_and_save_path_dict = {"conv1": "./tclsr_result_conv1.dat",
+                                     "conv2": "./tclsr_result_conv2.dat",
+                                     "conv3": "./tclsr_result_conv3.dat"}
+    prototxt_path='./TCLSR.prototxt'
+    caffemodel_path='./TCLSR.caffemodel'
+    input_shape_dict = {"n":1, "c":1, "h":250, "w":125}
     mean_npy_path = '/opt/caffe/python/caffe/imagenet/ilsvrc_2012_mean.npy'
-    set_mean = True
+    set_mean = False
 
     # load model, feed model, run model
     transformed_image, net = run_model(prototxt_path,\
@@ -118,25 +123,3 @@ if __name__ == "__main__":
     for layer_name in layer_name_and_save_path_dict.keys():
         save_path = layer_name_and_save_path_dict[layer_name]
         save_feature_data(net, layer_name, save_path)
-
-#'''
-   
-
-#'''
-#output_prob = output['prob'][0]
-#output_prob = output['fc7'][0]
-
-#print 'predicted class is:', output_prob.argmax()
-
-#for layer_name, blob in net.blobs.iteritems():
-#	print layer_name + '\t' + str(blob.data.shape)
-
-
-#prob = net.blobs['prob'].data[0].flatten()
-#prob = net.blobs['fc7'].data[0].flatten()
-#prob = net.blobs['prob'].data[0].flatten()
-
-
-#for i in range(len(prob)):
-#    print(str(i) +"\t" + '%.8f'%prob[i])
-#print len(prob)
