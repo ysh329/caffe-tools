@@ -60,6 +60,9 @@ def run_model(prototxt_file, caffemodel_path, image_path,\
     if set_mean:
         mu = np.load(mean_npy_path)
         mu = mu.mean(1).mean(1)
+        # if preprocess data is strange, try enable lines below
+        # mu[0] = mu[0] - 2 
+        # mu[1] = mu[1] - 1
         transformer.set_mean('data', mu)
 
     transformer.set_raw_scale('data', 255)
