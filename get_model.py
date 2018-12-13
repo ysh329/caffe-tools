@@ -89,18 +89,34 @@ def get_caffemodel_weight_list(caffe_param):
             blob = blob_vec[bidx]
             #print(blob.data.shape[:])
             if bidx == 0:
-                cur_layer_weight["filter"]       = blob.data[:]
+                #cur_layer_weight["filter"]       = blob.data[:].flatten()
+                filter_blob_data                 = blob.data
+                filter_                          = []
+                for n in xrange(filter_blob_data.shape[0]):
+                    for c in xrange(filter_blob_data.shape[1]):
+                        for h in xrange(filter_blob_data.shape[2]):
+                            for w in xrange(filter_blob_data.shape[3]):
+                                filter_.append(filter_blob_data[n, c, h, w])
+                cur_layer_weight["filter"]       = filter_
                 cur_layer_weight["filter_shape"] = blob.data[:].shape
                 cur_layer_weight["filter_count"] = reduce(mult, cur_layer_weight["filter_shape"])
             if bidx == 1:
-                cur_layer_weight["bias"]         = blob.data[:]
+                #cur_layer_weight["bias"]         = blob.data[:].flatten()
+                bias_blob_data                   = blob.data
+                bias                             = []
+                print(blob.data[:].shape)
+                for w in xrange(bias_blob_data.shape[0]):
+                    bias.append(bias_blob_data[w])
+                cur_layer_weight["bias"]         = bias 
                 cur_layer_weight["bias_shape"]   = blob.data[:].shape
                 cur_layer_weight["bias_count"]   = reduce(mult, cur_layer_weight["bias_shape"])
         weight_list.append(cur_layer_weight)
     return weight_list
 
 if __name__ == "__main__":
-    caffe_param = {"prototxt": "./ship_detectionOutput.prototxt",
-                   "caffemodel": "./ship_detectionOutput.caffemodel"}
+#    caffe_param = {"prototxt": "./ship_detectionOutput.prototxt",
+#                   "caffemodel": "./ship_detectionOutput.caffemodel"}
+    caffe_param = {"prototxt": "./ship_detection_no_bn.prototxt",
+                   "caffemodel": "./ship_detection_no_bn.caffemodel"}
     weight_list = get_caffemodel_weight_list(caffe_param)
     save_caffemodel(weight_list)
