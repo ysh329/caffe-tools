@@ -10,3 +10,7 @@ https://github.com/wkcn/CaffeSVD
 
 tidsp/caffe-jacinto: Caffe-jacinto - embedded deep learning framework
 https://github.com/tidsp/caffe-jacinto
+
+pmgysel/caffe: Ristretto: Caffe-based approximation of convolutional neural networks.
+https://github.com/pmgysel/caffe
+
